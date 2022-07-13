@@ -53,6 +53,14 @@ func (a *Server) CalculatePiNilakantha(nDigits int, pi *float64) error {
 	return nil
 }
 
+func (a *Server) StopServer(){
+	
+	server.GracefulStop()
+    listener.Close()
+
+	return nil
+}
+
 func main() {
 	var server = new(Server)
 	err := rpc.Register(server)
