@@ -6,7 +6,7 @@ import (
 	"net/rpc"
 )
 
-func StepsNumber() {
+func StepsNumber() int {
 	var nDigits int = 0
 
 	fmt.Printf("Digite o numero de passos que quer calcular do número PI! (tente não passar de 100000)\n\n")
@@ -19,7 +19,7 @@ func StepsNumber() {
 func main() {
 
 	var pi float64 = 0.0
-	var option int = 0
+	var option uint64 = 0
 
 	client, err := rpc.DialHTTP("tcp", "localhost:4040")
 
@@ -30,7 +30,6 @@ func main() {
 	fmt.Println("\nQual a função que quer utilizar?")
 	fmt.Println("1 - Leibniz")
 	fmt.Println("2 - Nilakantha")
-	fmt.Println("0 - Fechar servidor\n")
 	fmt.Print("Digite aqui sua opção: ")
 	fmt.Scan(&option)
 
@@ -43,9 +42,6 @@ func main() {
 		nDigits := StepsNumber()
 		client.Call("Server.CalculatePiNilakantha", nDigits, &pi)
 		fmt.Printf("O valor de Pi depois de %d passos usando a função de Nilakantha é %f\n", nDigits, pi)
-	case 0:
-		client.Call("Server.StopServer")
-		fmt.Printf("O servidor foi encerrado")
 	default:
 		fmt.Println("Digite uma opção válida! Tente novamente.")
 	}

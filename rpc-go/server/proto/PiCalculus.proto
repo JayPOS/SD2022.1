@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+service PiCalculus{
+    rpc CalculatePiLeibniz(CalculusData) returns (CalculusData) {}
+    rpc CalculateNilakantha(CalculusData) returns (CalculusData) {}
+}
+
+message CalculusData {
+    string method = 1;
+    uint64 steps = 2;
+    int64 result = 3;
+}
