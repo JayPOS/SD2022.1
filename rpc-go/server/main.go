@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
@@ -16,7 +17,8 @@ import (
 func leibniz(steps uint64) float64 {
 	var pi_value float64 = 0.0
 	var d float64 = 1
-	for i := 0; i < steps; i++ {
+	var i uint64
+	for i = 0; i < steps; i++ {
 		if i%2 == 0 {
 			pi_value += 4 / d
 		} else {
@@ -30,7 +32,8 @@ func leibniz(steps uint64) float64 {
 func nilakantha(steps uint64) float64 {
 	var pi_value float64 = 3.0
 	var d float64 = 2
-	for i := 0; i < steps; i++ {
+	var i uint64
+	for i = 0; i < steps; i++ {
 		if i%2 == 0 {
 			pi_value += 4 / ((d) * (d + 1) * (d + 2))
 		} else {
@@ -41,17 +44,18 @@ func nilakantha(steps uint64) float64 {
 	return pi_value
 }
 
-type Server struct {
+type PiCalculusServer struct {
+	pb.UnimplementedPiCalculusServer
 }
 
-func (a *Server) CalculatePiLeibniz(nDigits uint64, pi *float64) error {
-	fmt.Printf("Well, you should calculate %d steps pi here\n", nDigits)
-	*pi = leibniz(nDigits)
+func (a *PiCalculusServer) CalculatePiLeibniz(ctx context.Context, msg *pb.CalculusData) error {
+	fmt.Printf("Well, you should calculate %d steps pi here\n", msg.Steps)
+	result := leibniz(msg.Steps)
 
 	return nil
 }
 
-func (a *Server) CalculatePiNilakantha(nDigits uint64, pi *float64) error {
+func (a *PiCalculusServer) CalculatePiNilakantha(context.Context, *pb.CalculusData) error {
 	fmt.Printf("Well, you should calculate %d steps pi here\n", nDigits)
 	*pi = nilakantha(nDigits)
 
@@ -65,7 +69,7 @@ func main() {
 		log.Fatal("Listener error", err)
 	}
 	server := grpc.NewServer()
-	pb.RegisterPiCalculusServer(server, &PiCalculus{})
+	pb.RegisterPiCalculusServer(server, &PiCalculusServer{})
 
 	if err != nil {
 		log.Fatal("Error registering server", err)
